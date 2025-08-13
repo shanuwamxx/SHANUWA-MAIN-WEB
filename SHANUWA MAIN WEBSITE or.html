@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SHANUWA MAIN WEB — Main Page</title>
+
+<style>
+:root{ --c1:#00aaff; --c2:#aa00ff; --c3:#ff00aa; --c4:#ff0000; }
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:20px 0 60px}
+.container{width:320px;text-align:center}
+
+/* Animations */
+@keyframes frameColors{
+  0%{border-color:var(--c1);box-shadow:0 0 10px var(--c1)}
+  25%{border-color:var(--c2);box-shadow:0 0 10px var(--c2)}
+  50%{border-color:var(--c3);box-shadow:0 0 10px var(--c3)}
+  75%{border-color:var(--c4);box-shadow:0 0 10px var(--c4)}
+  100%{border-color:var(--c1);box-shadow:0 0 10px var(--c1)}
+}
+@keyframes textColors{
+  0%{color:var(--c1)}25%{color:var(--c2)}50%{color:var(--c3)}75%{color:var(--c4)}100%{color:var(--c1)}
+}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes dots{0%{content:''}33%{content:'.'}66%{content:'..'}100%{content:'...'}}
+
+/* Loading */
+#loading-screen{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:1000}
+.loader{border:8px solid #222;border-top:8px solid var(--c1);border-radius:50%;width:100px;height:100px;animation:spin 1s linear infinite}
+.loading-text{margin-top:15px;font-size:22px;letter-spacing:2px;height:30px;text-align:center;color:var(--c1);font-weight:bold}
+.dots::after{content:'';animation:dots 1s steps(3,end) infinite}
+
+/* Header */
+.title{font-size:32px;font-weight:700;margin-bottom:8px;user-select:none;display:flex;justify-content:center;align-items:center;gap:8px;animation:textColors 5s linear infinite}
+.icon-btn{cursor:pointer;font-size:20px;user-select:none;display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:8px;border:1px solid transparent;transition:.2s}
+.icon-btn:hover{border-color:var(--c1);box-shadow:0 0 8px rgba(0,170,255,.35)}
+.icon-live{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+.welcome-text{font-size:18px;font-weight:600;margin:10px 0 20px;user-select:none;letter-spacing:1px;text-align:center;animation:textColors 5s linear infinite}
+
+/* Banner */
+.banner-wrap{margin-bottom:12px}
+.banner-frame{
+  position:relative;width:100%;
+  border:3px solid var(--c1);border-radius:12px;
+  animation:frameColors 5s linear infinite;
+  overflow:hidden;background:#000;
+}
+.banner-img{display:block;width:100%;height:auto;transform:translateX(0)}
+.slide-in-right{animation:slideRight .6s ease both}
+.slide-in-left{animation:slideLeft .6s ease both}
+@keyframes slideRight{from{transform:translateX(100%);opacity:.5}to{transform:translateX(0);opacity:1}}
+@keyframes slideLeft {from{transform:translateX(-100%);opacity:.5}to{transform:translateX(0);opacity:1}}
+
+/* Boxes */
+.box-container{background:rgba(0,170,255,.05);border:3px solid var(--c1);border-radius:12px;padding:15px 20px;animation:frameColors 5s linear infinite;margin-bottom:20px}
+h3{margin:0 0 10px;font-size:22px;font-weight:700;animation:textColors 5s linear infinite;text-align:center}
+
+/* Buttons */
+.btn-list{display:flex;flex-direction:column;gap:10px}
+button{border:2px solid var(--c1);border-radius:8px;font-weight:700;font-size:18px;padding:10px 15px;cursor:pointer;text-align:left;width:100%;background:transparent;color:var(--c1);transition:.25s}
+button:hover{background:var(--c1);color:#000;transform:scale(1.03)}
+#media-links button{text-transform:uppercase}
+.small{font-size:16px;padding:8px 12px}
+
+/* Info */
+#information{text-align:left;font-size:18px;line-height:1.5;user-select:none;font-weight:600;padding-left:10px;animation:textColors 5s linear infinite}
+.battery-charging::after{content:" ⚡"}
+
+/* Content wrappers */
+#content{display:none;flex-direction:column;align-items:center}
+#created-by-box{display:none}
+#created-by-text{font-weight:600;user-select:none;letter-spacing:1px;font-size:16px;text-align:center;padding:12px 20px;border:2px solid var(--c1);border-radius:16px;background:rgba(0,170,255,.1);animation:frameColors 5s linear infinite;margin-top:10px}
+
+/* Comment UI */
+#comment-box{display:none;flex-direction:column;gap:10px;border:2px solid var(--c1);border-radius:10px;padding:15px;background:rgba(0,0,0,.8);animation:frameColors 5s linear infinite;margin-top:10px}
+#comment-box input,#comment-box textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--c1);background:transparent;color:#fff;font-size:16px}
+#comment-box textarea{resize:none;height:70px}
+.comment-actions{display:flex;gap:10px;justify-content:flex-end}
+.comment-actions button{flex:1;text-align:center}
+#all-comments{margin-top:5px;width:100%;border:2px solid var(--c1);border-radius:8px;font-weight:700;font-size:16px;padding:8px 15px;background:transparent;color:var(--c1);cursor:pointer;transition:.25s}
+#all-comments:hover{background:var(--c1);color:#000}
+#comment-list{margin-top:8px;text-align:left;font-size:14px;color:#ccc;max-height:220px;overflow-y:auto;border-top:1px solid rgba(255,255,255,.2);padding-top:6px}
+.comment{border-bottom:1px solid rgba(255,255,255,.2);padding:6px 0}
+.comment-name{font-weight:bold;color:#fff}
+.comment-text{margin:3px 0 5px 0;word-wrap:break-word;white-space:pre-wrap}
+.react-btn{cursor:pointer}
+.like-count{font-size:12px;margin-left:5px}
+.delete-btn{cursor:pointer;color:#ff6b6b;font-size:12px;margin-left:10px;display:none}
+.delete-btn:hover{text-decoration:underline}
+.status-chip{font-size:11px;opacity:.8;margin-left:6px}
+#comment-list.hidden{display:none}
+</style>
+</head>
+
+<body>
+<!-- Loading -->
+<div id="loading-screen">
+  <div class="loader"></div>
+  <div class="loading-text dots" id="loading-text">LOADING</div>
+</div>
+
+<!-- Main -->
+<div id="content" class="container">
+  <div class="title">
+    ..SHANUWA MAIN WEB..
+    <span id="lock-icon" class="icon-btn" title="Delete mode">🔒</span>
+    <!-- NEW: Song icon -->
+    <span id="song-icon" class="icon-btn" title="Play/Pause music">▶️</span>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner-wrap">
+    <div id="banner-frame" class="banner-frame">
+      <img id="banner-img" class="banner-img" src="" alt="Banner">
+    </div>
+  </div>
+
+  <div class="welcome-text">WELCOME TO SHANUWA<br>OFFICIAL WEB PAGE</div>
+
+  <!-- Groups -->
+  <div class="box-container"><h3>OUR GROUPS</h3>
+    <div class="btn-list" id="our-groups">
+      <button data-url="https://chat.whatsapp.com/LwfmbERcKyZAx3Fo9Q63Uf?mode=ac_t">WA BOTS</button>
+      <button data-url="https://chat.whatsapp.com/GTEX4FM9Nf6FMT86pPoPi0?mode=ac_t">MOVIE GROUP</button>
+      <button data-url="https://chat.whatsapp.com/Bbp93kPUaxFE0qKPKx1Hn5?mode=ac_t">MOVIE REQUESTS</button>
+      <button data-url="https://chat.whatsapp.com/J2rAh4ZRidpDhb3G3MPmQC?mode=ac_t">STETAS GROUP</button>
+      <button data-url="https://whatsapp.com/channel/0029VbBIgoLA2pL2XHMuDj0h">SHANUWA TOOL CHANNEL</button>
+      <button data-url="https://wa.me/94789994798">ALL OWNER</button>
+    </div>
+  </div>
+
+  <!-- Media Links -->
+  <div class="box-container"><h3>MEDIA LINKS</h3>
+    <div class="btn-list" id="media-links">
+      <button id="https://youtube.com/@shyt247?si=VS0X_6rqECbsmB3X">YOUTUBE CHANNEL 1k</button>
+      <button id="facebook-btn">FACEBOOK PAGE</button>
+      <button id="tiktok-btn">TIKTOK PAGE</button>
+      <button id="https://wa.me/94789994798">OWNER</button>
+    </div>
+  </div>
+
+  <!-- Website -->
+  <div class="box-container"><h3>OUR WEBSITE</h3>
+    <div class="btn-list" id="our-website">
+      <button data-url="https://shanuwa-ap4s.onrender.com/">X SHANUWA MD</button>
+      <button data-url="shanukalithikshana1@gmail.com">EMAIL</button>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="box-container"><h3>INFORMATION</h3>
+    <div id="information">
+      DATE = <span id="date">--</span><br>
+      DAY = <span id="day">--</span><br>
+      TIME = <span id="time">--:--:--</span><br>
+      WEATHER = <span id="weather">N/A</span><br>
+      BATTERY = <span id="battery">--%</span>
+    </div>
+  </div>
+
+  <!-- Comments -->
+  <div class="box-container" id="created-by-box">
+    <button id="open-comment-btn" style="margin-top:10px;width:100%;">OPEN COMMENT BOX</button>
+
+    <div id="comment-box">
+      <input type="text" id="comment-name" placeholder="Enter your name">
+      <textarea id="comment-text" placeholder="Enter your comment"></textarea>
+
+      <div class="comment-actions">
+        <button id="send-comment">SEND</button>
+        <button id="cancel-comment">CANCEL</button>
+      </div>
+
+      <!-- ALL COMMENTS toggle -->
+      <button id="all-comments" class="small">ALL COMMENTS</button>
+
+      <!-- List -->
+      <div id="comment-list" class="hidden"></div>
+    </div>
+
+    <div id="created-by-text">CREATED BY SHANUWA</div>
+  </div>
+</div>
+
+<audio id="bg-music" src="https://github.com/shanuwamxx/Calurator-/raw/main/cinematic-hip-hop-vlog-music-349853.mp3" preload="auto"></audio>
+
+<!-- Firebase (Compat v9) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+/* ===== Firebase: replace with your keys ===== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ===== Globals ===== */
+const audio = document.getElementById('bg-music');
+const songIcon = document.getElementById('song-icon');
+let deleteMode = false;
+let cancelClickCount = 0;
+let listVisible = false;
+let liveListenersOn = false;
+
+/* ===== Banner (7s swap, alternate side) ===== */
+const BANNERS = [
+  "https://github.com/shanuwamxx/Calurator-/raw/main/Picsart_25-08-13_16-48-19-619.jpg",
+  "https://github.com/shanuwamxx/Calurator-/raw/main/Picsart_25-08-13_16-56-08-909.jpg"
+];
+let bannerIndex = 0;
+let bannerDir = 1;
+const bannerImg = document.getElementById('banner-img');
+
+function showBanner(idx){
+  const cls = bannerDir === 1 ? 'slide-in-right' : 'slide-in-left';
+  bannerImg.classList.remove('slide-in-right','slide-in-left');
+  bannerImg.src = BANNERS[idx];
+  requestAnimationFrame(()=> bannerImg.classList.add(cls));
+  bannerDir *= -1;
+}
+function startBanner(){
+  showBanner(0);
+  setInterval(()=>{ bannerIndex = (bannerIndex+1)%BANNERS.length; showBanner(bannerIndex); },7000);
+}
+
+/* ===== Offline queue & cache ===== */
+const PENDING_KEY='hv_pending_comments', CACHE_KEY='hv_cached_comments';
+const getJSON=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d));}catch(e){return d}};
+const setJSON=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const getPending=()=>getJSON(PENDING_KEY);
+const setPending=(a)=>setJSON(PENDING_KEY,a);
+const addPending=(it)=>{const q=getPending(); q.push(it); setPending(q);};
+const getCache=()=>getJSON(CACHE_KEY);
+const setCache=(a)=>setJSON(CACHE_KEY,a);
+
+/* ===== Helpers ===== */
+function escapeHTML(str){
+  const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+  return String(str).replace(/[&<>"']/g,s=>map[s]);
+}
+const byId=(id)=>document.getElementById(id);
+
+/* ===== Loading sequence ===== */
+setTimeout(()=>{
+  const lt = byId('loading-text');
+  lt.classList.remove('dots');
+  lt.textContent='SHANUWA MAIN WEB';
+},2500);
+
+setTimeout(()=>{
+  byId('loading-screen').style.display='none';
+  byId('content').style.display='flex';
+  byId('created-by-box').style.display='block';
+  updateDateTime(); startClock(); updateBatteryStatus(); updateWeather();
+  // Try autoplay (may be blocked by browser)
+  audio.play().then(()=>updateSongIcon()).catch(()=>updateSongIcon());
+  startBanner();
+},5000);
+
+/* ===== Song icon logic (Play/Pause) ===== */
+function updateSongIcon(){
+  if (audio.paused){
+    songIcon.textContent = '▶️';
+    songIcon.classList.remove('icon-live');
+    songIcon.title = 'Play music';
+  } else {
+    songIcon.textContent = '⏸️';
+    songIcon.classList.add('icon-live');
+    songIcon.title = 'Pause music';
+  }
+}
+songIcon.addEventListener('click', async ()=>{
+  try{
+    if(audio.paused){ await audio.play(); } else { audio.pause(); }
+  }catch(e){}
+  updateSongIcon();
+});
+// keep icon synced if audio changes for any reason
+audio.addEventListener('play',  updateSongIcon);
+audio.addEventListener('pause', updateSongIcon);
+audio.addEventListener('ended', updateSongIcon);
+
+/* ===== UI actions ===== */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Links
+  document.querySelectorAll('button[data-url]').forEach(btn=>{
+    btn.addEventListener('click',()=>window.open(btn.getAttribute('data-url'),'_blank'));
+  });
+  byId('youtube-btn').onclick=()=>window.open('https://youtube.com/@hv.music.official?si=U3C3R99sDrh9y2BG','_blank');
+  byId('facebook-btn').onclick=()=>window.open('https://www.facebook.com/share/14LTvD2dWDX/','_blank');
+  byId('tiktok-btn').onclick=()=>window.open('https://www.tiktok.com/@hirunvikasitha','_blank');
+  byId('owner-btn').onclick=()=>{
+    const phoneNumber='94702529242';
+    const message=encodeURIComponent('*HI HIRUN VIKASITHA YOUR WEBSITE IS GOOD ✍🏻💐💗*');
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`,'_blank');
+  };
+
+  // Lock → delete mode
+  byId('lock-icon').onclick=()=>{
+    const pass=prompt('Enter password:');
+    if(pass==='SHANUWA'){
+      deleteMode=!deleteMode;
+      alert(deleteMode?'Delete mode activated!':'Delete mode deactivated!');
+      toggleDeleteButtons(deleteMode);
+    }else{ alert('Wrong password!'); }
+  };
+
+  // Comment box toggle
+  const toggleBtn=byId('open-comment-btn');
+  const box=byId('comment-box');
+  toggleBtn.onclick=()=>{
+    const isVisible=box.style.display==='flex';
+    if(isVisible){ box.style.display='none'; toggleBtn.textContent='OPEN COMMENT BOX'; }
+    else{ box.style.display='flex'; toggleBtn.textContent='CLOSE COMMENT BOX'; cancelClickCount=0; }
+  };
+
+  // Cancel (clear, then close on 2nd press)
+  byId('cancel-comment').onclick=()=>{
+    cancelClickCount++;
+    byId('comment-name').value=''; byId('comment-text').value='';
+    if(cancelClickCount>=2){ box.style.display='none'; toggleBtn.textContent='OPEN COMMENT BOX'; cancelClickCount=0; }
+  };
+
+  // Send
+  byId('send-comment').onclick=()=>{
+    const name=byId('comment-name').value.trim();
+    const comment=byId('comment-text').value.trim();
+    if(!name||!comment){alert('Please enter your name and comment!');return;}
+    sendComment(name,comment);
+    byId('comment-name').value=''; byId('comment-text').value=''; cancelClickCount=0;
+  };
+
+  // ALL COMMENTS toggle (show/hide + load)
+  byId('all-comments').onclick=()=>{
+    const list=byId('comment-list');
+    listVisible=!listVisible;
+    if(listVisible){
+      list.classList.remove('hidden');
+      byId('all-comments').textContent='HIDE COMMENTS';
+      loadAllOnce(); attachLiveListeners();
+    }else{
+      list.classList.add('hidden');
+      byId('all-comments').textContent='ALL COMMENTS';
+      detachLiveListeners();
+    }
+  };
+});
+
+/* ===== Comments logic ===== */
+function buildComment(name,text,key,queued){
+  const div=document.createElement('div');
+  div.classList.add('comment');
+  if(key) div.setAttribute('data-key',key);
+  div.innerHTML =
+    `<div class="comment-name">${escapeHTML(name)}${queued?'<span class="status-chip">(queued)</span>':''}</div>
+     <div class="comment-text">${escapeHTML(text)}</div>
+     <span class="react-btn">🩷</span>
+     <span class="like-count">0</span>
+     <span class="delete-btn">🗑️ Delete</span>`;
+  let likeCount=0, reacted=false;
+  div.querySelector('.react-btn').onclick=()=>{
+    reacted=!reacted; likeCount += reacted?1:-1;
+    div.querySelector('.like-count').textContent=String(likeCount);
+  };
+  div.querySelector('.delete-btn').onclick=()=>{
+    if(!deleteMode) return alert('Delete mode is off!');
+    if(key){
+      db.ref('comments/'+key).remove().catch(()=>{});
+      div.remove();
+      const cur=getCache().filter(x=>x.key!==key); setCache(cur);
+    }else{
+      const remaining=getPending().filter(p=>!(p.text===text&&p.name===name));
+      setPending(remaining); div.remove();
+    }
+  };
+  if(!deleteMode) div.querySelector('.delete-btn').style.display='none';
+  return div;
+}
+function addComment(name,text,key,queued){ byId('comment-list').appendChild(buildComment(name,text,key,queued)); }
+function toggleDeleteButtons(show){ document.querySelectorAll('.delete-btn').forEach(b=>b.style.display=show?'inline':'none'); }
+
+let addHandler=null, removeHandler=null;
+function attachLiveListeners(){
+  if(liveListenersOn) return;
+  const ref=db.ref('comments');
+  addHandler = ref.on('child_added', snap=>{
+    if(!listVisible) return;
+    const d=snap.val();
+    addComment(d.name||'Anon', d.text||'', snap.key, false);
+    const curr=getCache(); curr.push({key:snap.key,name:d.name||'Anon',text:d.text||'',createdAt:d.createdAt||Date.now()});
+    if(curr.length>200) curr.splice(0,curr.length-200);
+    setCache(curr);
+    const el=byId('comment-list'); el.scrollTop=el.scrollHeight;
+  });
+  removeHandler = ref.on('child_removed', snap=>{
+    const el=document.querySelector(`[data-key="${snap.key}"]`); if(el) el.remove();
+    const cur=getCache().filter(x=>x.key!==snap.key); setCache(cur);
+  });
+  liveListenersOn=true;
+}
+function detachLiveListeners(){
+  if(!liveListenersOn) return;
+  const ref=db.ref('comments');
+  try{
+    if(addHandler) ref.off('child_added', addHandler);
+    if(removeHandler) ref.off('child_removed', removeHandler);
+  }catch(e){}
+  liveListenersOn=false;
+}
+function loadAllOnce(){
+  const list=byId('comment-list'); list.innerHTML='';
+  if(!navigator.onLine){
+    getCache().forEach(c=>addComment(c.name,c.text,c.key||null,false));
+    return;
+  }
+  db.ref('comments').once('value').then(snap=>{
+    const arr=[];
+    snap.forEach(ch=>{
+      const d=ch.val();
+      addComment(d.name||'Anon', d.text||'', ch.key, false);
+      arr.push({key:ch.key,name:d.name||'Anon',text:d.text||'',createdAt:d.createdAt||Date.now()});
+    });
+    setCache(arr.slice(-200));
+    list.scrollTop=list.scrollHeight;
+  }).catch(()=>{
+    getCache().forEach(c=>addComment(c.name,c.text,c.key||null,false));
+  });
+}
+function sendComment(name,text){
+  const payload={name,text,createdAt:Date.now(),localId:(crypto.randomUUID?crypto.randomUUID():(Date.now()+'-'+Math.random()))};
+  if(navigator.onLine){
+    db.ref('comments').push({name:payload.name,text:payload.text,createdAt:payload.createdAt}).catch(()=>{
+      addPending(payload); if(listVisible) addComment(name,text,null,true);
+    });
+  }else{
+    addPending(payload); if(listVisible) addComment(name,text,null,true);
+  }
+}
+async function flushPending(){
+  if(!navigator.onLine) return;
+  const q=getPending(); if(q.length===0) return;
+  for(const it of q){ try{ await db.ref('comments').push({name:it.name,text:it.text,createdAt:it.createdAt||Date.now()}); }catch(e){ break; } }
+  setPending([]);
+}
+window.addEventListener('online', flushPending);
+
+/* ===== Date/Time/Battery/Weather ===== */
+function updateDateTime(){
+  const now=new Date();
+  byId('date').textContent = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  byId('day').textContent  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  byId('time').textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+}
+function startClock(){ setInterval(()=>{ const n=new Date(); byId('time').textContent =
+  `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`; },1000); }
+function updateBatteryStatus(){
+  if('getBattery' in navigator){
+    navigator.getBattery().then(b=>{
+      const upd=()=>{
+        const el=byId('battery'); const pct=Math.round(b.level*100)+'%';
+        el.textContent=pct; el.classList.toggle('battery-charging', b.charging);
+      };
+      upd(); b.addEventListener('levelchange',upd); b.addEventListener('chargingchange',upd);
+    });
+  }else{ byId('battery').textContent='N/A'; }
+}
+function updateWeather(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{
+      const {latitude,longitude}=pos.coords;
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`;
+      const r=await fetch(url); if(!r.ok) return;
+      const j=await r.json(); const t=j?.current?.temperature_2m;
+      if(typeof t==='number') byId('weather').textContent = `${Math.round(t)}°C`;
+    }catch(e){}
+  },()=>{}, {timeout:5000});
+}
+</script>
+</body>
+</html>
